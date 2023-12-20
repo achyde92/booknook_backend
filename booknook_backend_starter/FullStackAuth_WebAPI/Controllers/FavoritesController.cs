@@ -50,19 +50,11 @@ namespace FullStackAuth_WebAPI.Controllers
                 data.UserId = userId;
 
                 _context.Favorites.Add(data);
-                if (!ModelState.IsValid)
-                {
-                    // If the car model state is invalid, return a 400 bad request response with the model state errors
-                    return BadRequest(ModelState);
-                }
                 _context.SaveChanges();
-
-                // Return the newly created car as a 201 created response
                 return StatusCode(201, data);
             }
             catch (Exception ex)
             {
-                // If an error occurs, return a 500 internal server error with the error message
                 return StatusCode(500, ex.Message);
             }
         }

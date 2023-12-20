@@ -17,7 +17,7 @@ namespace FullStackAuth_WebAPI.Controllers
         {
             _context = context;
         }
-        // POST api/cars
+        // POST api/reviews
         [HttpPost, Authorize]
         public IActionResult Post([FromBody] Review data)
         {
@@ -32,12 +32,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 data.UserId = userId;
 
                 _context.Reviews.Add(data);
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
                 _context.SaveChanges();
-
                 return StatusCode(201, data);
             }
             catch (Exception ex)
