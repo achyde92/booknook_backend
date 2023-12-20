@@ -24,42 +24,40 @@ namespace FullStackAuth_WebAPI.Controllers
         {
             try
             {
-                // Retrieve the authenticated user's ID from the JWT token
                 string userId = User.FindFirstValue("id");
 
-                // Get reviews related to the bookId
                 var reviews = _context.Reviews
-                    .Where(r => r.BookId = bookId)
-                    .Include(r => r.User) // Include User for usernames
+                    .Where(r => r.BookId == bookId)
+                    .Include(r => r.User)
                     .Select(r => new ReviewWithUserDTO
                     {
-                        Id = r.Id,
+                        Users = r.User.Select(u => new UserForDisplayDto
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            UserName = u.UserName,
+                        }),
                         Text = r.Text,
                         Rating = r.Rating,
-                        UserName = r.User.UserName // Include only necessary user properties
                     })
                     .ToList();
 
-                // Calculate the average rating
                 double averageRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
 
-                // Check if the logged-in user has favorited this book
                 bool isFavorited = _context.Favorites.Any(f => f.UserId == userId && f.BookId == bookId);
 
-                // Create the BookDetailsDto
                 var bookDetails = new BookDetailsDTO
                 {
                     Reviews = reviews,
                     AverageRating = averageRating,
-                    IsFavorited = isFavorited
+                    IsFavorited = isFavorited,
                 };
-
-                // Return the BookDetailsDto as a 200 OK response
+                  
                 return Ok(bookDetails);
             }
             catch (Exception ex)
             {
-                // If an error occurs, return a 500 internal server error with the error message
                 return StatusCode(500, ex.Message);
             }
         }
