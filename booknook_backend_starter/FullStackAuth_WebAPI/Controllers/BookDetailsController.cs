@@ -5,6 +5,7 @@ using FullStackAuth_WebAPI.DataTransferObjects;
 using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FullStackAuth_WebAPI.Controllers
 {
@@ -20,24 +21,24 @@ namespace FullStackAuth_WebAPI.Controllers
         }
          // GET: api/bookdetails/{bookId}
         [HttpGet("{bookId}"), Authorize]
-        public IActionResult GetBookDetails(int bookId)
+        public IActionResult GetBookDetails(string bookId)
         {
             try
             {
                 string userId = User.FindFirstValue("id");
 
                 var reviews = _context.Reviews
-                    .Where(r => r.BookId == bookId)
                     .Include(r => r.User)
+                    .Where(r => r.BookId == bookId)
                     .Select(r => new ReviewWithUserDTO
                     {
-                        Users = r.User.Select(u => new UserForDisplayDto
+                        Users = new UserForDisplayDto
                         {
-                            Id = u.Id,
-                            FirstName = u.FirstName,
-                            LastName = u.LastName,
-                            UserName = u.UserName,
-                        }),
+                            Id = "0",
+                            FirstName = "Alex",
+                            LastName = "Hyde",
+                            UserName = "Ahyde",
+                        },
                         Text = r.Text,
                         Rating = r.Rating,
                     })
