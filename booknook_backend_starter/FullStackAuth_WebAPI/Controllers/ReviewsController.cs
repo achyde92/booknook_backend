@@ -17,6 +17,7 @@ namespace FullStackAuth_WebAPI.Controllers
         {
             _context = context;
         }
+
         // POST api/reviews
         [HttpPost, Authorize]
         public IActionResult Post([FromBody] Review data)
@@ -37,7 +38,8 @@ namespace FullStackAuth_WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine($"Exception: {ex}");
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
     }
